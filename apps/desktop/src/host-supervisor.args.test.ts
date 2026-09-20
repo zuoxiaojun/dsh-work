@@ -13,6 +13,7 @@ describe("dshWebArgs", () => {
   it("boots the web profile through the launcher so overlays are legal", () => {
     expect(dshWebArgs(entry)).toEqual([
       "--expose-internals",
+      "--max-http-header-size=65536",
       entry,
       "--profile",
       "web",
@@ -28,6 +29,7 @@ describe("dshWebArgs", () => {
     const args = dshWebArgs(entry, "/home/u/plugin-safe-mode.patch.yml");
     expect(args).toEqual([
       "--expose-internals",
+      "--max-http-header-size=65536",
       entry,
       "--profile",
       "web",
@@ -48,5 +50,25 @@ describe("dshWebArgs", () => {
   it("omits the overlay entirely rather than pointing at a missing file", () => {
     expect(dshWebArgs(entry, undefined).includes("--patch")).toBe(false);
     expect(dshWebArgs(entry, "").includes("--patch")).toBe(false);
+  });
+
+  it("hands every node flag to node, before the dsh entry", () => {
+    const args = dshWebArgs(entry);
+    const entryIndex = args.indexOf(entry);
+    for (const flag of ["--expose-internals", "--max-http-header-size=65536"]) {
+      const at = args.indexOf(flag);
+      expect(at, flag).toBeGreaterThan(-1);
+      expect(at, flag).toBeLessThan(entryIndex);
+    }
+  });
+
+  it("raises the request-header ceiling above a loaded plugin graph", () => {
+    // Node defaults to 16 KiB. The client-bundle request carries the whole
+    // plugin graph in its URL, and the jar attaches every loopback cookie to
+    // it; crossing the ceiling answered that one request 431, which the
+    // renderer reports as "Failed to load plugins".
+    const args = dshWebArgs(entry);
+    const flag = args.find((arg) => arg.startsWith("--max-http-header-size="));
+    expect(Number(flag?.split("=")[1])).toBeGreaterThanOrEqual(65_536);
   });
 });

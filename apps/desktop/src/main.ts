@@ -19,6 +19,10 @@ import {
 	type MenuItemConstructorOptions,
 } from "electron";
 import {
+	authCookieNameForAuthority,
+	staleAuthCookieNames,
+} from "./auth-cookies.ts";
+import {
 	createHostSupervisor,
 	spawnDshWeb,
 	type HostSupervisor,
@@ -237,6 +241,49 @@ function desktopRendererUrl(url: string): string {
 	} catch {
 		return url;
 	}
+}
+
+/**
+ * Delete browser-session cookies left behind by earlier Host generations.
+ *
+ * dsh names its credential after the authority (`host:port`) and keeps it for
+ * 30 days, while this shell boots every Host on a fresh ephemeral port. Without
+ * pruning, one cookie per launch piles up in the same jar and every loopback
+ * request carries all of them — until the longest one crosses the Host's
+ * request-header ceiling and comes back 431 (see auth-cookies.ts). Pruning
+ * before the page loads bounds the jar to the cookie this authority will mint.
+ */
+async function pruneStaleAuthCookies(url: string): Promise<void> {
+	let authority: string;
+	try {
+		authority = new URL(url).host;
+	} catch {
+		return;
+	}
+	const jar = session.defaultSession.cookies;
+	const page = `http://${authority}/`;
+	const names = (await jar.get({ url: page })).map((cookie) => cookie.name);
+	const stale = staleAuthCookieNames(
+		names,
+		authCookieNameForAuthority(authority),
+	);
+	for (const name of stale) await jar.remove(page, name);
+}
+
+/**
+ * Load one Host page after clearing the jar of dead credentials.
+ *
+ * Cookie hygiene must never block startup: a failure here costs jar hygiene,
+ * not the session, so it is logged and the page still loads.
+ */
+async function loadHostPage(
+	window: BrowserWindow,
+	url: string,
+): Promise<void> {
+	await pruneStaleAuthCookies(url).catch((error: unknown) => {
+		console.error("desktop auth-cookie prune failed:", error);
+	});
+	await window.loadURL(desktopRendererUrl(url));
 }
 
 function registerIpcHandlers(): void {
@@ -782,7 +829,7 @@ async function createMainWindow(): Promise<BrowserWindow> {
 		if (isExternalUrl(url)) void shell.openExternal(url);
 		return { action: "deny" };
 	});
-	await window.loadURL(desktopRendererUrl(target));
+	await loadHostPage(window, target);
 	if (!lifecycle?.isQuitting) window.show();
 	return window;
 }
@@ -961,7 +1008,7 @@ async function boot(): Promise<void> {
 		getWindow: () => mainWindow,
 		createWindow: createMainWindow,
 		loadHost: async (w, url) => {
-			await (w as BrowserWindow).loadURL(desktopRendererUrl(url));
+			await loadHostPage(w as BrowserWindow, url);
 		},
 		disposeHost: async () => {
 			await host?.shutdown();

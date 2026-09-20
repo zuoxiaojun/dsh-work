@@ -8,6 +8,19 @@ const DEFAULT_READINESS_TIMEOUT_MS = 90_000;
 const DEFAULT_SHUTDOWN_TIMEOUT_MS = 5_000;
 const MAX_STARTUP_OUTPUT_CHARS = 32_768;
 
+/**
+ * Request-header ceiling for the Host, in bytes.
+ *
+ * Node defaults to 16 KiB, which the Host outgrows: the client-bundle request
+ * carries the entire plugin graph in its URL (~2.6 KiB with 54 client entries)
+ * and Chromium attaches every loopback session cookie to it. Summed past
+ * 16 KiB, the Host answered 431 Request Header Fields Too Large for exactly
+ * that request and the renderer reported every plugin as failed to load.
+ * Stale cookies are pruned per launch (auth-cookies.ts); this raises the cliff
+ * behind that fix, because the URL keeps growing with the user's plugin list.
+ */
+const MAX_HTTP_HEADER_BYTES = 65_536;
+
 /** Incremental parser for the Web Host's canonical readiness line. */
 export interface ReadinessParser {
   push(chunk: string): string | undefined;
@@ -436,13 +449,21 @@ export interface SpawnDshWebOptions {
  * tree with a disable overlay, and let the OS pick a loopback port.
  *
  * Flag order is load-bearing — `--profile`/`--patch` are parsed by the dsh
- * launcher and must precede the app's own flags, which reach the web app.
+ * launcher and must precede the app's own flags, which reach the web app; node
+ * flags (`--expose-internals`, the header ceiling) must precede the entry path
+ * or dsh receives them instead of node.
  */
 export function dshWebArgs(
   dshEntry: string,
   patchFile?: string,
 ): string[] {
-  const args = ["--expose-internals", dshEntry, "--profile", "web"];
+  const args = [
+    "--expose-internals",
+    `--max-http-header-size=${String(MAX_HTTP_HEADER_BYTES)}`,
+    dshEntry,
+    "--profile",
+    "web",
+  ];
   if (patchFile !== undefined && patchFile !== "") {
     args.push("--patch", patchFile);
   }
