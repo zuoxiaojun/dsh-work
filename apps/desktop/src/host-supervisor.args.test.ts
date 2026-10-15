@@ -8,7 +8,7 @@ import { dshWebArgs } from "./host-supervisor.ts";
  * argv boots nothing and reads as a mysterious startup timeout.
  */
 describe("dshWebArgs", () => {
-  const entry = "/home/u/.dsh-desktop/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js";
+  const entry = "/home/u/.dsh-work/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js";
 
   it("boots the web profile through the launcher so overlays are legal", () => {
     expect(dshWebArgs(entry)).toEqual([

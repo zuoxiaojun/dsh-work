@@ -224,7 +224,7 @@ async function getJson<T>(url: string): Promise<T | undefined> {
     const res = await fetch(url, {
       signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
       headers: {
-        "User-Agent": "dsh-desktop",
+        "User-Agent": "dsh-work",
         Accept: "application/vnd.github+json",
       },
     });

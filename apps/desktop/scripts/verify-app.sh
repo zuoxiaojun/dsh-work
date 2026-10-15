@@ -13,11 +13,11 @@ APP_PATH="${1:-}"
 if [ -z "$APP_PATH" ] || [ ! -d "$APP_PATH" ]; then
   SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
   PROJECT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-  DEFAULT_APP="$PROJECT_DIR/dist/mac-arm64/DSH Desktop.app"
+  DEFAULT_APP="$PROJECT_DIR/dist/mac-arm64/DSH Work.app"
   if [ -d "$DEFAULT_APP" ]; then
     APP_PATH="$DEFAULT_APP"
   else
-    echo "❌ 用法: $0 <path/to/DSH Desktop.app>"
+    echo "❌ 用法: $0 <path/to/DSH Work.app>"
     echo "   未找到自动检测路径: $DEFAULT_APP"
     exit 1
   fi

@@ -19,13 +19,13 @@ export interface DesktopBridge {
 
 const bridge: DesktopBridge = Object.freeze({
   platform: process.platform,
-  versions: ipcRenderer.invoke("dsh-desktop:get-versions") as Promise<{
+  versions: ipcRenderer.invoke("dsh-work:get-versions") as Promise<{
     desktop: string;
     dsh: string | undefined;
   }>,
   dsh: Object.freeze({
     update: () =>
-      ipcRenderer.invoke("dsh-desktop:update-dsh") as Promise<{
+      ipcRenderer.invoke("dsh-work:update-dsh") as Promise<{
         ok: boolean;
         version?: string;
         error?: string;
@@ -34,16 +34,16 @@ const bridge: DesktopBridge = Object.freeze({
   }),
   desktopUpdate: Object.freeze({
     check: () =>
-      ipcRenderer.invoke("dsh-desktop:check-app-update") as Promise<{
+      ipcRenderer.invoke("dsh-work:check-app-update") as Promise<{
         ok: boolean;
       }>,
   }),
   workspace: Object.freeze({
     pickDirectory: () =>
-      ipcRenderer.invoke("dsh-desktop:workspace:pick-directory") as Promise<
+      ipcRenderer.invoke("dsh-work:workspace:pick-directory") as Promise<
         string | null
       >,
   }),
 });
 
-contextBridge.exposeInMainWorld("dshDesktop", bridge);
+contextBridge.exposeInMainWorld("dshWork", bridge);

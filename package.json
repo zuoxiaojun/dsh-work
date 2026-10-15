@@ -1,8 +1,8 @@
 {
-  "name": "dsh-desktop",
+  "name": "dsh-work",
   "version": "0.1.0",
   "private": true,
-  "description": "DSH Desktop - Electron client for DeepSeek Harness",
+  "description": "DSH Work - Electron client for DeepSeek Harness",
   "type": "module",
   "scripts": {
     "dev:desktop": "tsx apps/desktop/scripts/dev-desktop.ts",

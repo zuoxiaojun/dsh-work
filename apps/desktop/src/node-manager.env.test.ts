@@ -18,10 +18,10 @@ describe("withoutInheritedNpmConfig", () => {
 
   it("keeps unrelated environment intact", () => {
     const clean = withoutInheritedNpmConfig({
-      DSH_DESKTOP: "1",
+      DSH_WORK: "1",
       npm_config_cache: "/tmp/cache",
     });
-    expect(clean).toEqual({ DSH_DESKTOP: "1" });
+    expect(clean).toEqual({ DSH_WORK: "1" });
   });
 
   it("survives an empty environment", () => {

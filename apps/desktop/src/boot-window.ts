@@ -40,7 +40,7 @@ export function createBootWindow(options: BootWindowOptions): BootWindow {
 		fullscreenable: false,
 		frame: false,
 		show: false,
-		title: "DSH Desktop",
+		title: "DSH Work",
 		icon: appIcon,
 		webPreferences: {
 			contextIsolation: true,

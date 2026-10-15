@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PROJECT_DIR="$(cd "$APP_DIR/../.." && pwd)"
 
-APP_NAME="DSH Desktop"
+APP_NAME="DSH Work"
 # 自动识别打包架构：electron-builder --dir --mac 在 arm64 机器产出 mac-arm64，x64 机器产出 mac
 if [ -d "${PROJECT_DIR}/dist/mac-arm64" ]; then
   BUILD_ARCH="mac-arm64"
@@ -51,12 +51,12 @@ cp -R "$APP_PATH" "$STAGING_DIR/"
 # 显示「无法验证开发者 / 安全性阻止打开」，用户「右键 → 打开」即可运行；
 # 只有将来配置 Apple Developer ID + 公证，才能双击直达。
 # 用自建临时 keychain（密码可控、显式解锁），本地与 CI 都稳定，不依赖系统 login keychain。
-SIGN_IDENTITY="DSH Desktop Developer"
-SIGN_PASS="${DSH_DESKTOP_SIGN_PASS:-dsh-signing}"
-SIGN_CERT="/tmp/dsh-desktop-signing.crt"
-SIGN_KEY="/tmp/dsh-desktop-signing.key"
-SIGN_P12="/tmp/dsh-desktop-signing.p12"
-SIGN_KEYCHAIN="/tmp/dsh-desktop-signing.keychain"
+SIGN_IDENTITY="DSH Work Developer"
+SIGN_PASS="${DSH_WORK_SIGN_PASS:-dsh-signing}"
+SIGN_CERT="/tmp/dsh-work-signing.crt"
+SIGN_KEY="/tmp/dsh-work-signing.key"
+SIGN_P12="/tmp/dsh-work-signing.p12"
+SIGN_KEYCHAIN="/tmp/dsh-work-signing.keychain"
 
 ensure_signing_identity() {
   if security find-identity -p codesigning "${SIGN_KEYCHAIN}" 2>/dev/null | grep -q "${SIGN_IDENTITY}"; then
@@ -90,7 +90,7 @@ ln -s /Applications "$STAGING_DIR/Applications"
 # 创建 DMG
 echo "   Creating DMG with hdiutil..."
 rm -f "$DMG_OUTPUT"
-hdiutil create -volname "DSH Desktop ${VERSION}" \
+hdiutil create -volname "DSH Work ${VERSION}" \
   -srcfolder "$STAGING_DIR" \
   -ov -format UDZO -size 2g \
   "$DMG_OUTPUT"

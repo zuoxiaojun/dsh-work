@@ -1,7 +1,7 @@
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
-	appId: "com.dsh.desktop",
-	productName: "DSH Desktop",
+	appId: "com.dsh.work",
+	productName: "DSH Work",
 	artifactName: "${productName}-${version}-${os}-${arch}.${ext}",
 	directories: {
 		app: "apps/desktop",
@@ -38,7 +38,7 @@ module.exports = {
 		],
 	},
 	dmg: {
-		title: "DSH Desktop ${version}",
+		title: "DSH Work ${version}",
 		artifactName: "${productName}-${version}-${arch}.${ext}",
 		icon: "apps/desktop/build/icon.icns",
 		background: undefined,

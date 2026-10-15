@@ -1,4 +1,4 @@
-# Spec：DSH Desktop 纯壳架构（用户 Node + 缺省自装）
+# Spec：DSH Work 纯壳架构（用户 Node + 缺省自装）
 
 > 状态：已批准设计，已实施。本文记录架构决策，作为实施与后续维护的依据。
 > 关联：AGENTS.md（运行时文档单一维护源，以 AGENTS.md 为准）。
@@ -163,7 +163,7 @@ npm-cli.js 定位：
 
   ```
   spawn(nodeExecutable, ["--expose-internals", dshEntry, "web",
-    "--no-open", "--host", "127.0.0.1", "--port", "0"], { env: {...env, DSH_DESKTOP: "1"} })
+    "--no-open", "--host", "127.0.0.1", "--port", "0"], { env: {...env, DSH_WORK: "1"} })
   ```
 
 - 移除 `ELECTRON_RUN_AS_NODE` / `resolveDshEntry()` / 打包路径逻辑（不再需要）。

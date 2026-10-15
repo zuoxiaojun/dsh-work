@@ -1,8 +1,8 @@
-# DSH Desktop
+# DSH Work
 
 > DeepSeek Harness（`dsh web`）的桌面客户端
 
-DSH Desktop 是一个 Electron 桌面壳，在 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 官方 `dsh web` 之上提供桌面化体验。
+DSH Work 是一个 Electron 桌面壳，在 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 官方 `dsh web` 之上提供桌面化体验。
 
 **只加一个桌面入口，不改一行 DSH 核心代码，也不打包 DSH 依赖。**
 
@@ -24,7 +24,7 @@ DSH Desktop 是一个 Electron 桌面壳，在 [DeepSeek Harness](https://github
 
 ## 安装
 
-从 [GitHub Releases](https://github.com/zuoxiaojun/dsh-desktop/releases) 下载对应平台的安装包：
+从 [GitHub Releases](https://github.com/zuoxiaojun/dsh-work/releases) 下载对应平台的安装包：
 
 | 平台 | 安装包 | 说明 |
 | --- | --- | --- |
@@ -38,13 +38,13 @@ DSH Desktop 是一个 Electron 桌面壳，在 [DeepSeek Harness](https://github
 > - **用终端解除安全校验**：移除下载带来的 `com.apple.quarantine` 隔离属性：
 
 ```sh
-xattr -d com.apple.quarantine "/Applications/DSH Desktop.app"
+xattr -d com.apple.quarantine "/Applications/DSH Work.app"
 ```
 
 如需清除 app 的全部扩展属性（含 quarantine），可执行：
 
 ```sh
-xattr -cr "/Applications/DSH Desktop.app"
+xattr -cr "/Applications/DSH Work.app"
 ```
 
 若命令提示 app 不在上述路径，把引号里的 `.app` 路径换成实际的即可。

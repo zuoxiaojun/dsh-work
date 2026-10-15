@@ -1,4 +1,4 @@
-/** Electron application shell for the loopback DSH Desktop Web Host. */
+/** Electron application shell for the loopback DSH Work Web Host. */
 
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -64,8 +64,8 @@ import {
 	webProfileDir,
 } from "./plugin-updates.ts";
 
-const APP_NAME = "DSH Desktop";
-const GITHUB_REPO = "zuoxiaojun/dsh-desktop";
+const APP_NAME = "DSH Work";
+const GITHUB_REPO = "zuoxiaojun/dsh-work";
 const WINDOW_WIDTH = 1440;
 const WINDOW_HEIGHT = 920;
 const DESKTOP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -161,7 +161,7 @@ async function checkAppUpdate(force: boolean): Promise<void> {
 			{
 				signal: AbortSignal.timeout(6000),
 				headers: {
-					"User-Agent": "dsh-desktop",
+					"User-Agent": "dsh-work",
 					Accept: "application/vnd.github+json",
 				},
 			},
@@ -236,7 +236,7 @@ function hasOrigin(raw: string, expected: string): boolean {
 function desktopRendererUrl(url: string): string {
 	try {
 		const parsed = new URL(url);
-		parsed.searchParams.set("dsh-desktop-platform", process.platform);
+		parsed.searchParams.set("dsh-work-platform", process.platform);
 		return parsed.href;
 	} catch {
 		return url;
@@ -287,13 +287,13 @@ async function loadHostPage(
 }
 
 function registerIpcHandlers(): void {
-	ipcMain.handle("dsh-desktop:get-versions", () => ({
+	ipcMain.handle("dsh-work:get-versions", () => ({
 		desktop: DESKTOP_VERSION,
 		dsh: DSH_VERSION,
 	}));
 
 	// 用户点击「检查 dsh 内核更新」→ 手动安装 dsh 最新版（主进程菜单 / 托盘 / IPC 共用逻辑）
-	ipcMain.handle("dsh-desktop:update-dsh", async () => {
+	ipcMain.handle("dsh-work:update-dsh", async () => {
 		const result = await performDshUpdate();
 		if (result.ok && result.version) {
 			await dialog.showMessageBox({
@@ -309,7 +309,7 @@ function registerIpcHandlers(): void {
 	});
 
 	// 用户点击「检查桌面版更新」→ 手动检查桌面版新版本（GitHub Release）
-	ipcMain.handle("dsh-desktop:check-app-update", () => {
+	ipcMain.handle("dsh-work:check-app-update", () => {
 		void checkAppUpdate(true);
 		return { ok: true };
 	});
@@ -969,7 +969,7 @@ async function boot(): Promise<void> {
 	const pnpmBin = join(userDataDir, "tools", "pnpm", "node_modules", ".bin");
 	const hostEnv: NodeJS.ProcessEnv = {
 		...env,
-		DSH_DESKTOP: "1",
+		DSH_WORK: "1",
 		PATH: hostPathFor(
 			node,
 			existsSync(pnpmBin) ? pnpmBin : undefined,
