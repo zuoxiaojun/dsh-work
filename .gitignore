@@ -9,3 +9,6 @@ apps/desktop/resources/node-bundle-*
 .DS_Store
 *.local.*
 *.log
+
+# DSH harness 会话存储（session.v3.jsonl.zstd），非项目产物，不入库
+.sessions/
